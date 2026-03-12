@@ -24,8 +24,9 @@ public class UsuarioService {
             }
         }
 
-        if (usuario.getNome() == null || usuario.getEmail() == null || usuario.getTipoPlano() == null) {
-            throw new RuntimeException("Dados incompletos");
+        if (usuario.getNome() == null || usuario.getNome().isBlank() || usuario.getEmail() == null
+                || usuario.getEmail().isBlank() || usuario.getTipoPlano() == null) {
+            throw new RuntimeException("Dados inválidos");
         }
 
         usuario.setId(UUID.randomUUID());
@@ -64,7 +65,7 @@ public class UsuarioService {
     }
 
     //PUT /usuarios/{id}
-    public Usuario editUsuario(UUID id, String nome, String email, Usuario.TipoPlano tipoPlano) {
+    public Usuario editUsuario(UUID id, Usuario dadosAtualizados) {
 
         Usuario usuario = usuarios.get(id);
 
@@ -72,9 +73,14 @@ public class UsuarioService {
             throw new RuntimeException("Esse usuário não existe ou não pode ser modificado");
         }
 
-        usuario.setNome(nome);
-        usuario.setEmail(email);
-        usuario.setTipoPlano(tipoPlano);
+        if (dadosAtualizados.getNome() == null || dadosAtualizados.getNome().isBlank() || dadosAtualizados.getEmail() == null
+                || dadosAtualizados.getEmail().isBlank() || dadosAtualizados.getTipoPlano() == null) {
+            throw new RuntimeException("Dados inválidos");
+        }
+
+        usuario.setNome(dadosAtualizados.getNome());
+        usuario.setEmail(dadosAtualizados.getEmail());
+        usuario.setTipoPlano(dadosAtualizados.getTipoPlano());
 
         return usuario;
 
@@ -82,10 +88,13 @@ public class UsuarioService {
 
     //DELETE /usuarios/{id}
     public void deleteUsuario(UUID id) {
-
         Usuario usuario = usuarios.get(id);
-        usuario.setAtivo(false);
 
+        if (usuario == null || !usuario.isAtivo()) {
+            throw new RuntimeException("Esse usuário não existe ou não pode ser modificado");
+        }
+
+        usuario.setAtivo(false);
     }
 
 }
