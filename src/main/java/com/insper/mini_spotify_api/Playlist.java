@@ -4,10 +4,11 @@ import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public class Playlist {
 
-    private Long id;
+    private UUID id;
     private String nome;
     private boolean publica;
     private LocalDateTime dataCriacao;
@@ -15,11 +16,11 @@ public class Playlist {
     private List<Musica> musicas;
 
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

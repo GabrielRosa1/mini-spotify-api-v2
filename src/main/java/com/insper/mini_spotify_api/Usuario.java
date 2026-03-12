@@ -1,10 +1,11 @@
 package com.insper.mini_spotify_api;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Usuario {
 
-    private Long id;
+    private UUID id;
     private String nome;
     private String email;
     private TipoPlano tipoPlano;
@@ -13,16 +14,29 @@ public class Usuario {
     private Estatisticas estatisticas;
 
 
+    public Usuario() {
+
+    }
+
+    public Usuario(String nome, String email, TipoPlano tipoPlano) {
+
+        this.nome = nome;
+        this.email = email;
+        this.tipoPlano = tipoPlano;
+        this.ativo = true;
+
+    }
+
     public enum TipoPlano {
         FREE,
         PREMIUM
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

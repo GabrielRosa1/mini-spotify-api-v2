@@ -3,20 +3,21 @@ package com.insper.mini_spotify_api;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public class Album {
 
-    private Long id;
+    private UUID id;
     private String titulo;
     private LocalDate dataLancamento;
     private Artista artista;
 
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

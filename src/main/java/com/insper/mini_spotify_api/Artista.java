@@ -1,20 +1,21 @@
 package com.insper.mini_spotify_api;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Artista {
 
-    private Long id;
+    private UUID id;
     private String nome;
     private String generoMusical;
     private String paisOrigem;
 
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

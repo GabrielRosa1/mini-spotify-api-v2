@@ -1,8 +1,10 @@
 package com.insper.mini_spotify_api;
 
+import java.util.UUID;
+
 public class Musica {
 
-    private Long id;
+    private UUID id;
     private String titulo;
     private int duracaoSegundos;
     private int numeroFaixa;
@@ -11,11 +13,11 @@ public class Musica {
     private int totalReproducoes;
 
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
