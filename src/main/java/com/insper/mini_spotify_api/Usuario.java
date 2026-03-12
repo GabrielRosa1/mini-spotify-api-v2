@@ -12,6 +12,7 @@ public class Usuario {
     private boolean ativo;
     private LocalDateTime dataCriacao;
     private Estatisticas estatisticas;
+    private Playlist playlists;
 
 
     public Usuario() {
@@ -88,4 +89,11 @@ public class Usuario {
         this.estatisticas = estatisticas;
     }
 
+    public Playlist getPlaylists() {
+        return playlists;
+    }
+
+    public void setPlaylists(Playlist playlists) {
+        this.playlists = playlists;
+    }
 }

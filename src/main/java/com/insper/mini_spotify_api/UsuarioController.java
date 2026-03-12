@@ -67,7 +67,7 @@ public class UsuarioController {
         }
     }
 
-    @PutMapping("/usuarios/{id}")
+    @PutMapping("/usuarios/reativar/{id}")
     public ResponseEntity<Object> reactivateUsuario(@PathVariable UUID id) {
         try {
             Usuario usuario = usuarioService.reactivateUsuario(id);
