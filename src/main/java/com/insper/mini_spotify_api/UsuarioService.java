@@ -11,11 +11,6 @@ import java.util.UUID;
 @Service
 public class UsuarioService {
 
-    //GET /usuarios
-    //GET /usuarios/{id}
-    //PUT /usuarios/{id}
-    //DELETE /usuarios/{id}
-
     private HashMap<UUID, Usuario> usuarios = new HashMap<>();
 
     //Espaço para @Autowired
@@ -41,6 +36,7 @@ public class UsuarioService {
         return usuario;
     }
 
+    //GET /usuarios
     public Collection<Usuario> getUsuarios() {
 
         Collection<Usuario> totalUsuarios = new ArrayList<>();
@@ -52,6 +48,44 @@ public class UsuarioService {
         }
 
         return totalUsuarios;
+    }
+
+    //GET /usuarios/{id}
+    public Usuario getUsuario(UUID id) {
+
+        Usuario usuario = usuarios.get(id);
+
+        if (usuario == null) {
+            throw new RuntimeException("Esse usuário não existe");
+        }
+
+        return usuario;
+
+    }
+
+    //PUT /usuarios/{id}
+    public Usuario editUsuario(UUID id, String nome, String email, Usuario.TipoPlano tipoPlano) {
+
+        Usuario usuario = usuarios.get(id);
+
+        if (usuario == null || !usuario.isAtivo()) {
+            throw new RuntimeException("Esse usuário não existe ou não pode ser modificado");
+        }
+
+        usuario.setNome(nome);
+        usuario.setEmail(email);
+        usuario.setTipoPlano(tipoPlano);
+
+        return usuario;
+
+    }
+
+    //DELETE /usuarios/{id}
+    public void deleteUsuario(UUID id) {
+
+        Usuario usuario = usuarios.get(id);
+        usuario.setAtivo(false);
+
     }
 
 }
