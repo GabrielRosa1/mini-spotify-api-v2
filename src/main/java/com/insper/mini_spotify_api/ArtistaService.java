@@ -22,15 +22,15 @@ public class ArtistaService {
             throw new RuntimeException("Body inválido");
         }
 
-        if (artista.getNome().isBlank() || artista.getNome() == null) {
+        if (artista.getNome() == null || artista.getNome().isBlank()) {
             throw new RuntimeException("Nome do artista é obrigatório");
         }
 
-        if (artista.getGeneroMusical().isBlank() || artista.getGeneroMusical() == null) {
+        if (artista.getGeneroMusical() == null || artista.getGeneroMusical().isBlank()) {
             throw new RuntimeException("Gênero musical do artista é obrigatório");
         }
 
-        if (artista.getPaisOrigem().isBlank() || artista.getPaisOrigem() == null) {
+        if (artista.getPaisOrigem() == null || artista.getPaisOrigem().isBlank()) {
             throw new RuntimeException("País de origem do artista é obrigatório");
         }
 
@@ -103,7 +103,7 @@ public class ArtistaService {
         }
 
         for (Artista a : artistas.values()) {
-            if (a.getNome().equalsIgnoreCase(dadosAtualizados.getNome())) {
+            if (!a.getId().equals(id) && a.getNome().equalsIgnoreCase(dadosAtualizados.getNome())) {
                 throw new RuntimeException("Já existe um artista com esse nome");
             }
         }

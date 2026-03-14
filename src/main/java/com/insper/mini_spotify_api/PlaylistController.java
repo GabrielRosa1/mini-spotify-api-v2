@@ -78,10 +78,10 @@ public class PlaylistController {
         }
     }
 
-    @PostMapping("/playlists/{id}/musica/{id}")
-    public ResponseEntity<Object> adicionarMusica(@PathVariable UUID pID, @PathVariable UUID mID) {
+    @PostMapping("/playlists/{playlistId}/musicas/{musicaId}")
+    public ResponseEntity<Object> adicionarMusica(@PathVariable UUID playlistId, @PathVariable UUID musicaId, @RequestHeader("X-USER-ID") UUID usuarioId) {
         try {
-            Playlist playlist = playlistService.adicionarMusica(pID, mID);
+            Playlist playlist = playlistService.adicionarMusica(playlistId, musicaId, usuarioId);
             return ResponseEntity.ok(playlist);
         }
         catch (RuntimeException e) {

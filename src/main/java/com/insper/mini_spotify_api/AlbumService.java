@@ -29,7 +29,7 @@ public class AlbumService {
             throw new RuntimeException("Body inválido");
         }
 
-        if (album.getTitulo().isBlank() || album.getTitulo() == null) {
+        if (album.getTitulo() == null || album.getTitulo().isBlank()) {
             throw new RuntimeException("Título do album é obrigatório");
         }
 

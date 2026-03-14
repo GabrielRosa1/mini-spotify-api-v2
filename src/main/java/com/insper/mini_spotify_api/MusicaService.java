@@ -12,11 +12,15 @@ import java.util.UUID;
 @Service
 public class MusicaService {
 
+    private final UsuarioService usuarioService;
+    private final EstatisticasService estatisticasService;
     private final ArtistaService artistaService;
     private final AlbumService albumService;
     private final HashMap<UUID, Musica> musicas = new HashMap<>();
 
-    public MusicaService(ArtistaService artistaService, AlbumService albumService) {
+    public MusicaService(UsuarioService usuarioService, EstatisticasService estatisticasService, ArtistaService artistaService, AlbumService albumService) {
+        this.usuarioService = usuarioService;
+        this.estatisticasService = estatisticasService;
         this.artistaService = artistaService;
         this.albumService = albumService;
     }
@@ -173,5 +177,20 @@ public class MusicaService {
         musica.setAtivo(true);
         return musica;
     }
+
+    public Musica reproduzirMusica(UUID musicaId, UUID usuarioId) {
+        Musica musica = getMusica(musicaId);
+        Usuario usuario = usuarioService.getUsuario(usuarioId);
+
+        if (!usuario.isAtivo()) {
+            throw new RuntimeException("Usuário inativo não pode reproduzir música");
+        }
+
+        musica.setTotalReproducoes(musica.getTotalReproducoes() + 1);
+        estatisticasService.registrarReproducao(usuarioId, musicaId);
+
+        return musica;
+    }
+
 
 }

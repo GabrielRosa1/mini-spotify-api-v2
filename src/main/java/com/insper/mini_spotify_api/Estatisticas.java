@@ -7,8 +7,12 @@ public class Estatisticas {
     private Artista artistaFavorito;
     private Album albumFavorito;
     private Musica musicaFavorita;
-    private int tempoReproducao;
+    private Integer tempoReproducao;
 
+    public Estatisticas() {
+        this.musicasReproduzidas = 0;
+        this.tempoReproducao = 0;
+    }
 
     public Usuario getUsuario() {
         return usuario;
@@ -50,12 +54,11 @@ public class Estatisticas {
         this.musicaFavorita = musicaFavorita;
     }
 
-    public int getTempoReproducao() {
+    public Integer getTempoReproducao() {
         return tempoReproducao;
     }
 
-    public void setTempoReproducao(int tempoReproducao) {
+    public void setTempoReproducao(Integer tempoReproducao) {
         this.tempoReproducao = tempoReproducao;
     }
-
 }

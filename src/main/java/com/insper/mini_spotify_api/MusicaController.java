@@ -77,4 +77,15 @@ public class MusicaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @PostMapping("/musicas/{id}/reproduzir")
+    public ResponseEntity<Object> reproduzirMusica(@PathVariable UUID id, @RequestHeader("X-USER-ID") UUID usuarioId) {
+        try {
+            Musica musica = musicaService.reproduzirMusica(id, usuarioId);
+            return ResponseEntity.ok(musica);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }

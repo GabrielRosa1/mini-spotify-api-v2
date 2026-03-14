@@ -95,7 +95,8 @@ public class Usuario {
         return playlists;
     }
 
-    public void setPlaylists(Playlist playlists) {
-        this.playlists = Collections.singletonList(playlists);
+    public void setPlaylists(Collection<Playlist> playlists) {
+        this.playlists = playlists;
     }
+
 }

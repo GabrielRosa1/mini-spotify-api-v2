@@ -89,7 +89,7 @@ public class PlaylistService {
 
         Playlist playlist = playlists.get(id);
 
-        if (playlist == null || !playlist.getPublica() || !playlist.isAtivo()) {
+        if (playlist == null || !playlist.isAtivo()) {
             throw new RuntimeException("Essa playlist não existe ou está privada");
         }
 
@@ -146,13 +146,29 @@ public class PlaylistService {
     }
 
     //POST /playlists/{id}/musica/{id}
-    public Playlist adicionarMusica(UUID pId, UUID mId) {
+    public Playlist adicionarMusica(UUID pId, UUID mId, UUID usuarioId) {
         Playlist playlist = playlists.get(pId);
+
+        if (playlist == null || !playlist.isAtivo()) {
+            throw new RuntimeException("Essa playlist não existe");
+        }
+
         Musica musica = musicaService.getMusica(mId);
-        List<Musica> musicas = playlist.getMusicas();
-        musicas.add(musica);
-        playlist.setMusicas(musicas);
+        Usuario usuario = usuarioService.getUsuario(usuarioId);
+
+        if (!playlist.getUsuario().getId().equals(usuario.getId())) {
+            throw new RuntimeException("Apenas o dono da playlist pode adicionar músicas");
+        }
+
+        for (Musica m : playlist.getMusicas()) {
+            if (m.getId().equals(musica.getId())) {
+                throw new RuntimeException("Essa música já está na playlist");
+            }
+        }
+
+        playlist.getMusicas().add(musica);
         return playlist;
     }
+
 
 }

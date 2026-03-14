@@ -13,8 +13,6 @@ public class UsuarioService {
 
     private HashMap<UUID, Usuario> usuarios = new HashMap<>();
 
-    //Espaço para @Autowired
-
     //POST /usuarios
     public Usuario cadastrarUsuario(Usuario usuario) {
 

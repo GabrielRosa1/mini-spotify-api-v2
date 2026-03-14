@@ -10,7 +10,7 @@ public class Musica {
     private int numeroFaixa;
     private Album album;
     private Artista artista;
-    private int totalReproducoes;
+    private long totalReproducoes;
     private boolean ativo;
 
     public UUID getId() {
@@ -61,11 +61,11 @@ public class Musica {
         this.artista = artista;
     }
 
-    public int getTotalReproducoes() {
+    public long getTotalReproducoes() {
         return totalReproducoes;
     }
 
-    public void setTotalReproducoes(int totalReproducoes) {
+    public void setTotalReproducoes(long totalReproducoes) {
         this.totalReproducoes = totalReproducoes;
     }
 
