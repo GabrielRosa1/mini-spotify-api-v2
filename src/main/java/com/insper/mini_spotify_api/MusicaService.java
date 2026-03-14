@@ -21,6 +21,9 @@ public class MusicaService {
         this.albumService = albumService;
     }
 
+    public HashMap<UUID, Musica> getHashMusicas() {
+        return musicas;
+    }
 
     //POST /musicas
     public Musica criarMusica(Musica musica) {

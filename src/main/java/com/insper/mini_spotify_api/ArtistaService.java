@@ -39,7 +39,7 @@ public class ArtistaService {
             List<Album> albuns = artista.getAlbuns();
             for (Album a : albuns) {
                 for (Album b : albumService.getAlbuns().values()) {
-                    if (a.getId() == b.getId()) {
+                    if (a.getId().equals(b.getId())) {
                         albunsReais.add(a);
                     }
                 }
@@ -113,7 +113,7 @@ public class ArtistaService {
             List<Album> albuns = dadosAtualizados.getAlbuns();
             for (Album a : albuns) {
                 for (Album b : albumService.getAlbuns().values()) {
-                    if (a.getId() == b.getId()) {
+                    if (a.getId().equals(b.getId())) {
                         albunsReaisUpdate.add(a);
                     }
                 }
@@ -139,7 +139,7 @@ public class ArtistaService {
         artista.setAtivo(false);
     }
 
-    //PUT /artistas/{id}
+    //PUT /artistas/reativar/{id}
     public Artista reactivateArtista(UUID id) {
         Artista artista = artistas.get(id);
 

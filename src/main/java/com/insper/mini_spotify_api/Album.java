@@ -3,6 +3,7 @@ package com.insper.mini_spotify_api;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public class Album {
@@ -11,6 +12,8 @@ public class Album {
     private String titulo;
     private LocalDate dataLancamento;
     private Artista artista;
+    private boolean ativo;
+    private List<Musica> musicas;
 
 
     public UUID getId() {
@@ -45,4 +48,19 @@ public class Album {
         this.artista = artista;
     }
 
+    public List<Musica> getMusicas() {
+        return musicas;
+    }
+
+    public void setMusicas(List<Musica> musicas) {
+        this.musicas = musicas;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
 }
