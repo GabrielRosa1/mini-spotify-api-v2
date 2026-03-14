@@ -5,16 +5,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 
-
 @Service
 public class AlbumService {
 
-    private final MusicaService musicaService;
     private final ArtistaService artistaService;
     private final HashMap<UUID, Album> albuns = new HashMap<>();
 
-    public AlbumService(MusicaService musicaService, ArtistaService artistaService) {
-        this.musicaService = musicaService;
+    public AlbumService(ArtistaService artistaService) {
         this.artistaService = artistaService;
     }
 
@@ -22,26 +19,13 @@ public class AlbumService {
         return albuns;
     }
 
-    //POST /albuns
     public Album criarAlbum(Album album) {
-
         if (album == null) {
             throw new RuntimeException("Body inválido");
         }
 
         if (album.getTitulo() == null || album.getTitulo().isBlank()) {
-            throw new RuntimeException("Título do album é obrigatório");
-        }
-
-        List<Musica> musicasReais = new ArrayList<>();
-        if (!album.getMusicas().isEmpty()) {
-            for (Musica a : album.getMusicas()) {
-                for (Musica b : musicaService.getHashMusicas().values()) {
-                    if (a.getId().equals(b.getId())) {
-                        musicasReais.add(a);
-                    }
-                }
-            }
+            throw new RuntimeException("Título do álbum é obrigatório");
         }
 
         if (album.getArtista() == null) {
@@ -49,25 +33,26 @@ public class AlbumService {
         }
 
         if (!artistaService.verifyUUID(album.getArtista().getId())) {
-            throw new RuntimeException("Id de um usuário válido é obrigatório");
+            throw new RuntimeException("Id de um artista válido é obrigatório");
         }
 
         if (!artistaService.getArtista(album.getArtista().getId()).isAtivo()) {
-            throw new RuntimeException("Usuário inativo");
+            throw new RuntimeException("Artista inativo");
         }
 
         album.setId(UUID.randomUUID());
         album.setAtivo(true);
         album.setDataLancamento(LocalDate.now());
-        album.setMusicas(musicasReais);
+
+        if (album.getMusicas() == null) {
+            album.setMusicas(new ArrayList<>());
+        }
 
         albuns.put(album.getId(), album);
         return album;
     }
 
-    //GET /albuns
     public Collection<Album> getTotalAlbuns() {
-
         Collection<Album> totalAlbuns = new ArrayList<>();
 
         for (Album a : albuns.values()) {
@@ -79,42 +64,29 @@ public class AlbumService {
         return totalAlbuns;
     }
 
-    //GET /albuns/{id}
     public Album getAlbum(UUID id) {
-
         Album album = albuns.get(id);
 
         if (album == null || !album.isAtivo()) {
-            throw new RuntimeException("Esse album não existe");
+            throw new RuntimeException("Esse álbum não existe");
         }
 
         return album;
-
     }
 
-    //PUT /albuns/{id}
     public Album editAlbum(UUID id, Album dadosAtualizados) {
-
         Album album = albuns.get(id);
 
         if (album == null || !album.isAtivo()) {
-            throw new RuntimeException("Essa album não existe ou não pode ser modificado");
+            throw new RuntimeException("Esse álbum não existe ou não pode ser modificado");
         }
 
-        if (dadosAtualizados.getTitulo().isBlank() || dadosAtualizados.getTitulo() == null) {
-            throw new RuntimeException("Título do album é obrigatório");
+        if (dadosAtualizados == null) {
+            throw new RuntimeException("Body inválido");
         }
 
-        List<Musica> musicasReaisUpdate = new ArrayList<>();
-        if (!dadosAtualizados.getMusicas().isEmpty()) {
-            for (Musica a : dadosAtualizados.getMusicas()) {
-                for (Musica b : musicaService.getHashMusicas().values()) {
-                    if (a.getId().equals(b.getId())) {
-                        musicasReaisUpdate.add(a);
-                    }
-                }
-            }
-            album.setMusicas(musicasReaisUpdate);
+        if (dadosAtualizados.getTitulo() == null || dadosAtualizados.getTitulo().isBlank()) {
+            throw new RuntimeException("Título do álbum é obrigatório");
         }
 
         if (dadosAtualizados.getArtista() == null) {
@@ -129,35 +101,35 @@ public class AlbumService {
             throw new RuntimeException("Artista inativo");
         }
 
-
         album.setTitulo(dadosAtualizados.getTitulo());
         album.setArtista(dadosAtualizados.getArtista());
-        album.setMusicas(musicasReaisUpdate);
+
+        if (dadosAtualizados.getMusicas() != null) {
+            album.setMusicas(dadosAtualizados.getMusicas());
+        }
 
         return album;
     }
 
-    //DELETE /albuns/{id}
     public void deleteAlbum(UUID id) {
         Album album = albuns.get(id);
 
         if (album == null || !album.isAtivo()) {
-            throw new RuntimeException("Essa album não existe ou não pode ser modificada");
+            throw new RuntimeException("Esse álbum não existe ou não pode ser modificado");
         }
 
         album.setAtivo(false);
     }
 
-    //PUT /albuns/reativar/{id}
     public Album reactivateAlbum(UUID id) {
         Album album = albuns.get(id);
 
         if (album == null) {
-            throw new RuntimeException("Esse album não existe ou não pode ser modificado");
+            throw new RuntimeException("Esse álbum não existe ou não pode ser modificado");
         }
 
         if (album.isAtivo()) {
-            throw new RuntimeException("Esse album já está ativo");
+            throw new RuntimeException("Esse álbum já está ativo");
         }
 
         album.setAtivo(true);

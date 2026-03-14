@@ -16,6 +16,10 @@ public class UsuarioService {
     //POST /usuarios
     public Usuario cadastrarUsuario(Usuario usuario) {
 
+        if (usuario == null) {
+            throw new RuntimeException("Body inválido");
+        }
+
         for (Usuario u : usuarios.values()) {
             if (u.getEmail().equals(usuario.getEmail())) {
                 throw new RuntimeException("Um usuário com esse e-mail já existe");
@@ -69,6 +73,12 @@ public class UsuarioService {
 
         if (usuario == null || !usuario.isAtivo()) {
             throw new RuntimeException("Esse usuário não existe ou não pode ser modificado");
+        }
+
+        for (Usuario u : usuarios.values()) {
+            if (u.getEmail().equals(usuario.getEmail())) {
+                throw new RuntimeException("Um usuário com esse e-mail já existe");
+            }
         }
 
         if (dadosAtualizados.getNome() == null || dadosAtualizados.getNome().isBlank() || dadosAtualizados.getEmail() == null

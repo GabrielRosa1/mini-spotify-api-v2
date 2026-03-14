@@ -136,7 +136,7 @@ public class MusicaService {
         }
 
         for (Musica m : musicas.values()) {
-            if (m.getTitulo().equalsIgnoreCase(dadosAtualizados.getTitulo())) {
+            if (!m.getId().equals(id) && m.getTitulo().equalsIgnoreCase(dadosAtualizados.getTitulo())) {
                 throw new RuntimeException("Já existe uma musica com esse título");
             }
         }
@@ -187,10 +187,8 @@ public class MusicaService {
         }
 
         musica.setTotalReproducoes(musica.getTotalReproducoes() + 1);
-        estatisticasService.registrarReproducao(usuarioId, musicaId);
+        estatisticasService.registrarReproducao(usuarioId, musica);
 
         return musica;
     }
-
-
 }

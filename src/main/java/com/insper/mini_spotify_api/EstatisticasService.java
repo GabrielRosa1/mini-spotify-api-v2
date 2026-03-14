@@ -9,15 +9,12 @@ import java.util.UUID;
 public class EstatisticasService {
 
     private final UsuarioService usuarioService;
-    private final MusicaService musicaService;
     private final HashMap<UUID, Estatisticas> estatisticasPorUsuario = new HashMap<>();
 
-    public EstatisticasService(UsuarioService usuarioService, MusicaService musicaService) {
+    public EstatisticasService(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
-        this.musicaService = musicaService;
     }
 
-    // POST /usuarios/{usuarioId}/estatisticas
     public Estatisticas criarEstatisticas(UUID usuarioId) {
         Usuario usuario = usuarioService.getUsuario(usuarioId);
 
@@ -34,7 +31,6 @@ public class EstatisticasService {
         return estatisticas;
     }
 
-    // GET /usuarios/{usuarioId}/estatisticas
     public Estatisticas getEstatisticas(UUID usuarioId) {
         Usuario usuario = usuarioService.getUsuario(usuarioId);
 
@@ -47,10 +43,8 @@ public class EstatisticasService {
         return estatisticas;
     }
 
-    // PUT /usuarios/{usuarioId}/estatisticas
     public Estatisticas atualizarEstatisticas(UUID usuarioId, Estatisticas dadosAtualizados) {
         Usuario usuario = usuarioService.getUsuario(usuarioId);
-
         Estatisticas estatisticas = estatisticasPorUsuario.get(usuario.getId());
 
         if (estatisticas == null) {
@@ -70,10 +64,8 @@ public class EstatisticasService {
         return estatisticas;
     }
 
-    // DELETE /usuarios/{usuarioId}/estatisticas
     public void deleteEstatisticas(UUID usuarioId) {
         Usuario usuario = usuarioService.getUsuario(usuarioId);
-
         Estatisticas estatisticas = estatisticasPorUsuario.get(usuario.getId());
 
         if (estatisticas == null) {
@@ -84,9 +76,8 @@ public class EstatisticasService {
         usuario.setEstatisticas(null);
     }
 
-    public Estatisticas registrarReproducao(UUID usuarioId, UUID musicaId) {
+    public Estatisticas registrarReproducao(UUID usuarioId, Musica musica) {
         Usuario usuario = usuarioService.getUsuario(usuarioId);
-        Musica musica = musicaService.getMusica(musicaId);
 
         Estatisticas estatisticas = estatisticasPorUsuario.get(usuario.getId());
 
