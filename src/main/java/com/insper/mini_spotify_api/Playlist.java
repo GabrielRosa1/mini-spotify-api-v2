@@ -14,6 +14,7 @@ public class Playlist {
     private LocalDateTime dataCriacao;
     private Usuario usuario;
     private List<Musica> musicas;
+    private boolean ativo;
 
 
     public UUID getId() {
@@ -64,4 +65,15 @@ public class Playlist {
         this.musicas = musicas;
     }
 
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public void setat(boolean b) {
+
+    }
 }
