@@ -5,21 +5,19 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 
-
 @Service
 public class PlaylistService {
 
     private final UsuarioService usuarioService;
     private final MusicaService musicaService;
-    private HashMap<UUID, Playlist> playlists = new HashMap<>();
+    private final HashMap<UUID, Playlist> playlists = new HashMap<>();
 
     public PlaylistService(UsuarioService usuarioService, MusicaService musicaService) {
         this.usuarioService = usuarioService;
         this.musicaService = musicaService;
     }
 
-
-    //POST /playlists
+    // POST /playlists
     public Playlist criarPlaylist(Playlist playlist) {
 
         if (playlist == null) {
@@ -30,7 +28,7 @@ public class PlaylistService {
             throw new RuntimeException("Nome da playlist é obrigatório");
         }
 
-        if (playlist.getUsuario() == null) {
+        if (playlist.getUsuario() == null || playlist.getUsuario().getId() == null) {
             throw new RuntimeException("Usuário é obrigatório");
         }
 
@@ -38,7 +36,9 @@ public class PlaylistService {
             throw new RuntimeException("Id de um usuário válido é obrigatório");
         }
 
-        if (!usuarioService.getUsuario(playlist.getUsuario().getId()).isAtivo()) {
+        Usuario usuario = usuarioService.getUsuario(playlist.getUsuario().getId());
+
+        if (!usuario.isAtivo()) {
             throw new RuntimeException("Usuário inativo");
         }
 
@@ -47,22 +47,38 @@ public class PlaylistService {
         }
 
         for (Playlist p : playlists.values()) {
-            if (p.getNome().equalsIgnoreCase(playlist.getNome())) {
+            if (p.getNome() != null && p.getNome().equalsIgnoreCase(playlist.getNome())) {
                 throw new RuntimeException("Já existe uma playlist com esse nome");
             }
         }
 
-        if (playlist.getMusicas() == null) {
-            playlist.setMusicas(new ArrayList<>());
-        }
+        List<Musica> musicasReais = new ArrayList<>();
 
-        for (Musica musica : playlist.getMusicas()) {
-            if (musica == null) {
-                throw new RuntimeException("A playlist contém música nula");
+        if (playlist.getMusicas() != null) {
+            for (Musica musica : playlist.getMusicas()) {
+                if (musica == null || musica.getId() == null) {
+                    throw new RuntimeException("A playlist contém música inválida");
+                }
+
+                Musica musicaReal = musicaService.getMusica(musica.getId());
+
+                boolean repetida = false;
+                for (Musica m : musicasReais) {
+                    if (m.getId().equals(musicaReal.getId())) {
+                        repetida = true;
+                        break;
+                    }
+                }
+
+                if (!repetida) {
+                    musicasReais.add(musicaReal);
+                }
             }
         }
 
         playlist.setId(UUID.randomUUID());
+        playlist.setUsuario(usuario);
+        playlist.setMusicas(musicasReais);
         playlist.setDataCriacao(LocalDateTime.now());
         playlist.setAtivo(true);
 
@@ -70,9 +86,8 @@ public class PlaylistService {
         return playlist;
     }
 
-    //GET /playlists
+    // GET /playlists
     public Collection<Playlist> getPlaylists() {
-
         Collection<Playlist> totalPlaylists = new ArrayList<>();
 
         for (Playlist p : playlists.values()) {
@@ -84,20 +99,22 @@ public class PlaylistService {
         return totalPlaylists;
     }
 
-    //GET /playlists/{id}
+    // GET /playlists/{id}
     public Playlist getPlaylist(UUID id) {
-
         Playlist playlist = playlists.get(id);
 
         if (playlist == null || !playlist.isAtivo()) {
-            throw new RuntimeException("Essa playlist não existe ou está privada");
+            throw new RuntimeException("Essa playlist não existe");
+        }
+
+        if (playlist.getMusicas() == null) {
+            playlist.setMusicas(new ArrayList<>());
         }
 
         return playlist;
-
     }
 
-    //PUT /playlists/{id}
+    // PUT /playlists/{id}
     public Playlist editPlaylist(UUID id, Playlist dadosAtualizados) {
 
         Playlist playlist = playlists.get(id);
@@ -106,19 +123,73 @@ public class PlaylistService {
             throw new RuntimeException("Essa playlist não existe ou não pode ser modificada");
         }
 
+        if (dadosAtualizados == null) {
+            throw new RuntimeException("Body inválido");
+        }
+
         if (dadosAtualizados.getNome() == null || dadosAtualizados.getNome().isBlank()) {
-            throw new RuntimeException("Dados inválidos");
+            throw new RuntimeException("Nome da playlist é obrigatório");
+        }
+
+        if (dadosAtualizados.getUsuario() == null || dadosAtualizados.getUsuario().getId() == null) {
+            throw new RuntimeException("Usuário é obrigatório");
+        }
+
+        if (!usuarioService.verifyUUID(dadosAtualizados.getUsuario().getId())) {
+            throw new RuntimeException("Id de um usuário válido é obrigatório");
+        }
+
+        Usuario usuario = usuarioService.getUsuario(dadosAtualizados.getUsuario().getId());
+
+        if (!usuario.isAtivo()) {
+            throw new RuntimeException("Usuário inativo");
+        }
+
+        if (dadosAtualizados.getPublica() == null) {
+            throw new RuntimeException("Campo 'publica' é obrigatório");
+        }
+
+        for (Playlist p : playlists.values()) {
+            if (!p.getId().equals(id)
+                    && p.getNome() != null
+                    && p.getNome().equalsIgnoreCase(dadosAtualizados.getNome())) {
+                throw new RuntimeException("Já existe uma playlist com esse nome");
+            }
+        }
+
+        List<Musica> musicasReais = new ArrayList<>();
+
+        if (dadosAtualizados.getMusicas() != null) {
+            for (Musica musica : dadosAtualizados.getMusicas()) {
+                if (musica == null || musica.getId() == null) {
+                    throw new RuntimeException("A playlist contém música inválida");
+                }
+
+                Musica musicaReal = musicaService.getMusica(musica.getId());
+
+                boolean repetida = false;
+                for (Musica m : musicasReais) {
+                    if (m.getId().equals(musicaReal.getId())) {
+                        repetida = true;
+                        break;
+                    }
+                }
+
+                if (!repetida) {
+                    musicasReais.add(musicaReal);
+                }
+            }
         }
 
         playlist.setNome(dadosAtualizados.getNome());
-        playlist.setUsuario(dadosAtualizados.getUsuario());
-        playlist.setMusicas(dadosAtualizados.getMusicas());
+        playlist.setUsuario(usuario);
+        playlist.setPublica(dadosAtualizados.getPublica());
+        playlist.setMusicas(musicasReais);
 
         return playlist;
-
     }
 
-    //DELETE /playlists/{id}
+    // DELETE /playlists/{id}
     public void deletePlaylist(UUID id) {
         Playlist playlist = playlists.get(id);
 
@@ -129,7 +200,7 @@ public class PlaylistService {
         playlist.setAtivo(false);
     }
 
-    //PUT /playlists/{id}
+    // PUT /playlists/reativar/{id}
     public Playlist reactivatePlaylist(UUID id) {
         Playlist playlist = playlists.get(id);
 
@@ -145,12 +216,16 @@ public class PlaylistService {
         return playlist;
     }
 
-    //POST /playlists/{id}/musica/{id}
+    // POST /playlists/{playlistId}/musicas/{musicaId}
     public Playlist adicionarMusica(UUID pId, UUID mId, UUID usuarioId) {
         Playlist playlist = playlists.get(pId);
 
         if (playlist == null || !playlist.isAtivo()) {
             throw new RuntimeException("Essa playlist não existe");
+        }
+
+        if (playlist.getMusicas() == null) {
+            playlist.setMusicas(new ArrayList<>());
         }
 
         Musica musica = musicaService.getMusica(mId);
@@ -170,5 +245,12 @@ public class PlaylistService {
         return playlist;
     }
 
-
+    public boolean verifyUUID(UUID id) {
+        for (Playlist p : playlists.values()) {
+            if (p.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

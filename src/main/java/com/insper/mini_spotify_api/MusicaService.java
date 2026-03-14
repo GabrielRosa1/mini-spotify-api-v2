@@ -40,11 +40,11 @@ public class MusicaService {
             throw new RuntimeException("Titulo da musica é obrigatório");
         }
 
-        if (musica.getArtista() == null) {
+        if (musica.getArtista() == null || musica.getArtista().getId() == null) {
             throw new RuntimeException("Artista é obrigatório");
         }
 
-        if (musica.getAlbum() == null) {
+        if (musica.getAlbum() == null || musica.getAlbum().getId() == null) {
             throw new RuntimeException("Album é obrigatório");
         }
 
@@ -111,16 +111,24 @@ public class MusicaService {
             throw new RuntimeException("Essa musica não existe ou não pode ser modificada");
         }
 
+        if (dadosAtualizados == null) {
+            throw new RuntimeException("Body inválido");
+        }
+
         if (dadosAtualizados.getTitulo() == null || dadosAtualizados.getTitulo().isBlank()) {
             throw new RuntimeException("Titulo da musica é obrigatório");
         }
 
-        if (dadosAtualizados.getArtista() == null) {
+        if (dadosAtualizados.getArtista() == null || dadosAtualizados.getArtista().getId() == null) {
             throw new RuntimeException("Artista é obrigatório");
         }
 
-        if (dadosAtualizados.getAlbum() == null) {
+        if (dadosAtualizados.getAlbum() == null || dadosAtualizados.getAlbum().getId() == null) {
             throw new RuntimeException("Album é obrigatório");
+        }
+
+        if (dadosAtualizados.getNumeroFaixa() < 0 || dadosAtualizados.getDuracaoSegundos() < 0) {
+            throw new RuntimeException("Campos numeroFaixa e duracaoSegundos são obrigatórios");
         }
 
         if (!albumService.verifyUUID(dadosAtualizados.getAlbum().getId())) {
@@ -132,7 +140,7 @@ public class MusicaService {
         }
 
         if (dadosAtualizados.getNumeroFaixa() < 0 || dadosAtualizados.getDuracaoSegundos() < 0) {
-            throw new RuntimeException("Campos numeroFaixa e duracaoSegundos devem ter valores reais");
+            throw new RuntimeException("Campos numeroFaixa e duracaoSegundos devem ser maiores ou iguais a zero");
         }
 
         for (Musica m : musicas.values()) {
@@ -142,13 +150,12 @@ public class MusicaService {
         }
 
         musica.setTitulo(dadosAtualizados.getTitulo());
-        musica.setAlbum(dadosAtualizados.getAlbum());
-        musica.setArtista(dadosAtualizados.getArtista());
+        musica.setAlbum(albumService.getAlbum(dadosAtualizados.getAlbum().getId()));
+        musica.setArtista(artistaService.getArtista(dadosAtualizados.getArtista().getId()));
         musica.setNumeroFaixa(dadosAtualizados.getNumeroFaixa());
         musica.setDuracaoSegundos(dadosAtualizados.getDuracaoSegundos());
 
         return musica;
-
     }
 
     //DELETE /musicas/{id}

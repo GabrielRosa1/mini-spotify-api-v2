@@ -89,7 +89,7 @@ public class AlbumService {
             throw new RuntimeException("Título do álbum é obrigatório");
         }
 
-        if (dadosAtualizados.getArtista() == null) {
+        if (dadosAtualizados.getArtista() == null || dadosAtualizados.getArtista().getId() == null) {
             throw new RuntimeException("Artista é obrigatório");
         }
 
@@ -97,16 +97,14 @@ public class AlbumService {
             throw new RuntimeException("Id de um artista válido é obrigatório");
         }
 
-        if (!artistaService.getArtista(dadosAtualizados.getArtista().getId()).isAtivo()) {
+        Artista artista = artistaService.getArtista(dadosAtualizados.getArtista().getId());
+
+        if (!artista.isAtivo()) {
             throw new RuntimeException("Artista inativo");
         }
 
         album.setTitulo(dadosAtualizados.getTitulo());
-        album.setArtista(dadosAtualizados.getArtista());
-
-        if (dadosAtualizados.getMusicas() != null) {
-            album.setMusicas(dadosAtualizados.getMusicas());
-        }
+        album.setArtista(artista);
 
         return album;
     }

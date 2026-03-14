@@ -73,7 +73,4 @@ public class Playlist {
         this.ativo = ativo;
     }
 
-    public void setat(boolean b) {
-
-    }
 }
