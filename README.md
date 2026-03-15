@@ -1,188 +1,219 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Java-17+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white"/>
+<img src="https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white"/>
+<img src="https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white"/>
+<img src="https://img.shields.io/badge/REST_API-005571?style=for-the-badge&logo=fastapi&logoColor=white"/>
+
 # 🎧 Mini Spotify API
 
-API REST desenvolvida com **Spring Boot** para simular funcionalidades básicas de uma plataforma de streaming de música, inspirada no Spotify.
+> **API REST** desenvolvida com **Spring Boot** que simula as funcionalidades essenciais de uma plataforma de streaming de música, inspirada no Spotify.
 
-O projeto permite o gerenciamento de:
+[![Status](https://img.shields.io/badge/Status-Ativo-1DB954?style=flat-square)]()
+[![Licença](https://img.shields.io/badge/Licença-MIT-blue?style=flat-square)]()
+[![Armazenamento](https://img.shields.io/badge/Storage-In--Memory-orange?style=flat-square)]()
 
-- Usuários
-- Artistas
-- Álbuns
-- Músicas
-- Playlists
-- Estatísticas
-
-## Ordem ideal para testar
-
-1. Criar usuário
-2. Criar artista
-3. Criar álbum
-4. Criar música
-5. Criar playlist
-6. Reproduzir música
-7. Adicionar música à playlist
-8. Buscar estatísticas
-9. Buscar top músicas
-
-Além do CRUD tradicional, a aplicação também implementa regras de negócio específicas, como reprodução de músicas, adição de músicas em playlists e relatório de músicas mais reproduzidas.
+</div>
 
 ---
 
-## 📌 Objetivo do Projeto
+## 📋 Índice
 
-Desenvolver uma API REST em Java com Spring Boot, aplicando conceitos de:
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Tecnologias](#-tecnologias-utilizadas)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Entidades](#-entidades-do-projeto)
+- [Endpoints](#-endpoints-crud)
+- [Regras de Negócio](#-regras-de-negócio-implementadas)
+- [Exclusão Lógica](#-exclusão-lógica)
+- [Validações](#-validações-implementadas)
+- [Como Executar](#-como-executar-o-projeto)
+- [Exemplos de Requisições](#-exemplos-de-requisições)
+- [Coleção Postman](#-coleção-postman)
+- [Autor](#-autor)
 
-- Modelagem de entidades
-- Separação em camadas
-- Regras de negócio
-- Boas práticas REST
-- Validações de entrada
-- Exclusão lógica
+---
+
+## 🎯 Sobre o Projeto
+
+A aplicação permite o gerenciamento completo de:
+
+| Módulo | Descrição |
+|--------|-----------|
+| 👤 **Usuários** | Cadastro e controle de acesso à plataforma |
+| 🎤 **Artistas** | Registro de artistas e bandas |
+| 💿 **Álbuns** | Gerenciamento de álbuns musicais |
+| 🎵 **Músicas** | Controle de faixas e reproduções |
+| 📂 **Playlists** | Criação e curadoria de playlists |
+| 📊 **Estatísticas** | Histórico e preferências musicais dos usuários |
+
+Além do CRUD tradicional, a aplicação implementa **regras de negócio específicas** como reprodução de músicas, adição de músicas em playlists e relatório das músicas mais reproduzidas.
+
+### 🎓 Objetivo Acadêmico
+
+> Desenvolvida para demonstrar na prática os seguintes conceitos:
+
+- ✅ Modelagem de entidades
+- ✅ Separação em camadas (Controller / Service)
+- ✅ Regras de negócio
+- ✅ Boas práticas REST
+- ✅ Validações de entrada
+- ✅ Exclusão lógica
 
 ---
 
 ## 🛠 Tecnologias Utilizadas
 
-| Tecnologia | Descrição |
-|------------|-----------|
-| **Java** | Linguagem principal |
-| **Spring Boot** | Framework da aplicação |
-| **Maven** | Gerenciador de dependências |
-| **UUID** | Identificação das entidades |
-| **HashMap** | Armazenamento em memória |
+| Tecnologia | Versão | Descrição |
+|------------|--------|-----------|
+| ![Java](https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white) | 17+ | Linguagem principal |
+| ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat-square&logo=spring-boot&logoColor=white) | 3.x | Framework da aplicação |
+| ![Maven](https://img.shields.io/badge/Maven-C71A36?style=flat-square&logo=apache-maven&logoColor=white) | — | Gerenciador de dependências |
+| `UUID` | — | Identificação das entidades |
+| `HashMap` | — | Armazenamento em memória |
 
 ---
 
 ## 🧱 Estrutura do Projeto
 
-A aplicação foi organizada em camadas:
-
-- **Controller** — responsável por expor os endpoints da API
-- **Service** — responsável pelas regras de negócio e manipulação dos dados
-
 ```
-src/main/java/com/insper/mini_spotify_api
-├── Album.java
-├── AlbumController.java
-├── AlbumService.java
-├── Artista.java
-├── ArtistaController.java
-├── ArtistaService.java
-├── Estatisticas.java
-├── EstatisticasController.java
-├── EstatisticasService.java
-├── Musica.java
-├── MusicaController.java
-├── MusicaService.java
-├── Playlist.java
-├── PlaylistController.java
-├── PlaylistService.java
-├── Usuario.java
-├── UsuarioController.java
-├── UsuarioService.java
-└── MiniSpotifyApiApplication.java
+src/main/java/com/insper/mini_spotify_api/
+│
+├── 👤 Usuario.java
+├──    UsuarioController.java
+├──    UsuarioService.java
+│
+├── 🎤 Artista.java
+├──    ArtistaController.java
+├──    ArtistaService.java
+│
+├── 💿 Album.java
+├──    AlbumController.java
+├──    AlbumService.java
+│
+├── 🎵 Musica.java
+├──    MusicaController.java
+├──    MusicaService.java
+│
+├── 📂 Playlist.java
+├──    PlaylistController.java
+├──    PlaylistService.java
+│
+├── 📊 Estatisticas.java
+├──    EstatisticasController.java
+├──    EstatisticasService.java
+│
+└── 🚀 MiniSpotifyApiApplication.java
 ```
 
 ---
 
 ## 🗂 Entidades do Projeto
 
-### 1. Usuário
-
-Representa um usuário da plataforma.
-
-| Atributo | Tipo |
-|----------|------|
-| `id` | UUID |
-| `nome` | String |
-| `email` | String |
-| `tipoPlano` | ENUM: `FREE`, `PREMIUM` |
-| `ativo` | boolean |
-| `dataCriacao` | LocalDateTime |
-
-### 2. Artista
-
-Representa um artista ou banda.
+<details>
+<summary><strong>👤 Usuário</strong> — Representa um usuário da plataforma</summary>
 
 | Atributo | Tipo |
 |----------|------|
-| `id` | UUID |
-| `nome` | String |
-| `generoMusical` | String |
-| `paisOrigem` | String |
-| `albuns` | List\<Album\> |
-| `ativo` | boolean |
+| `id` | `UUID` |
+| `nome` | `String` |
+| `email` | `String` |
+| `tipoPlano` | `ENUM: FREE, PREMIUM` |
+| `ativo` | `boolean` |
+| `dataCriacao` | `LocalDateTime` |
 
-### 3. Álbum
+</details>
 
-Representa um álbum musical.
-
-| Atributo | Tipo |
-|----------|------|
-| `id` | UUID |
-| `titulo` | String |
-| `dataLancamento` | LocalDate |
-| `artista` | Artista |
-| `musicas` | List\<Musica\> |
-| `ativo` | boolean |
-
-### 4. Música
-
-Representa uma música disponível na plataforma.
+<details>
+<summary><strong>🎤 Artista</strong> — Representa um artista ou banda</summary>
 
 | Atributo | Tipo |
 |----------|------|
-| `id` | UUID |
-| `titulo` | String |
-| `duracaoSegundos` | int |
-| `numeroFaixa` | int |
-| `album` | Album |
-| `artista` | Artista |
-| `totalReproducoes` | long |
-| `ativo` | boolean |
+| `id` | `UUID` |
+| `nome` | `String` |
+| `generoMusical` | `String` |
+| `paisOrigem` | `String` |
+| `albuns` | `List<Album>` |
+| `ativo` | `boolean` |
 
-### 5. Playlist
+</details>
 
-Representa uma playlist criada por um usuário.
-
-| Atributo | Tipo |
-|----------|------|
-| `id` | UUID |
-| `nome` | String |
-| `publica` | Boolean |
-| `dataCriacao` | LocalDateTime |
-| `usuario` | Usuario |
-| `musicas` | List\<Musica\> |
-| `ativo` | boolean |
-
-### 6. Estatísticas
-
-Entidade adicional criada para representar o histórico e preferências de consumo musical de um usuário.
+<details>
+<summary><strong>💿 Álbum</strong> — Representa um álbum musical</summary>
 
 | Atributo | Tipo |
 |----------|------|
-| `usuario` | Usuario |
-| `musicasReproduzidas` | Integer |
-| `artistaFavorito` | Artista |
-| `albumFavorito` | Album |
-| `musicaFavorita` | Musica |
-| `tempoReproducao` | Integer |
+| `id` | `UUID` |
+| `titulo` | `String` |
+| `dataLancamento` | `LocalDate` |
+| `artista` | `Artista` |
+| `musicas` | `List<Musica>` |
+| `ativo` | `boolean` |
 
----
+</details>
 
-## 🔗 Relacionamentos
+<details>
+<summary><strong>🎵 Música</strong> — Representa uma faixa disponível na plataforma</summary>
 
-- Um **Artista** pode ter vários **Álbuns**
-- Um **Álbum** pode ter várias **Músicas**
-- Um **Usuário** pode ter várias **Playlists**
-- Uma **Playlist** pode conter várias **Músicas**
+| Atributo | Tipo |
+|----------|------|
+| `id` | `UUID` |
+| `titulo` | `String` |
+| `duracaoSegundos` | `int` |
+| `numeroFaixa` | `int` |
+| `album` | `Album` |
+| `artista` | `Artista` |
+| `totalReproducoes` | `long` |
+| `ativo` | `boolean` |
 
-> Como o projeto utiliza armazenamento em memória, esses relacionamentos são representados através de referências entre objetos.
+</details>
+
+<details>
+<summary><strong>📂 Playlist</strong> — Representa uma playlist criada por um usuário</summary>
+
+| Atributo | Tipo |
+|----------|------|
+| `id` | `UUID` |
+| `nome` | `String` |
+| `publica` | `Boolean` |
+| `dataCriacao` | `LocalDateTime` |
+| `usuario` | `Usuario` |
+| `musicas` | `List<Musica>` |
+| `ativo` | `boolean` |
+
+</details>
+
+<details>
+<summary><strong>📊 Estatísticas</strong> — Histórico e preferências de consumo musical do usuário</summary>
+
+| Atributo | Tipo |
+|----------|------|
+| `usuario` | `Usuario` |
+| `musicasReproduzidas` | `Integer` |
+| `artistaFavorito` | `Artista` |
+| `albumFavorito` | `Album` |
+| `musicaFavorita` | `Musica` |
+| `tempoReproducao` | `Integer` |
+
+</details>
+
+### 🔗 Relacionamentos
+
+```
+Artista  ──(1:N)──▶  Álbum
+Álbum    ──(1:N)──▶  Música
+Usuário  ──(1:N)──▶  Playlist
+Playlist ──(N:N)──▶  Música
+Usuário  ──(1:1)──▶  Estatísticas
+```
+
+> ⚠️ Como o projeto utiliza armazenamento em memória, os relacionamentos são representados por **referências entre objetos**.
 
 ---
 
 ## 🌐 Endpoints CRUD
 
-### Usuários
+### 👤 Usuários — `/usuarios`
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
@@ -193,7 +224,7 @@ Entidade adicional criada para representar o histórico e preferências de consu
 | `DELETE` | `/usuarios/{id}` | Excluir usuário (lógico) |
 | `PUT` | `/usuarios/reativar/{id}` | Reativar usuário |
 
-### Artistas
+### 🎤 Artistas — `/artistas`
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
@@ -204,7 +235,7 @@ Entidade adicional criada para representar o histórico e preferências de consu
 | `DELETE` | `/artistas/{id}` | Excluir artista (lógico) |
 | `PUT` | `/artistas/reativar/{id}` | Reativar artista |
 
-### Álbuns
+### 💿 Álbuns — `/albuns`
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
@@ -215,7 +246,7 @@ Entidade adicional criada para representar o histórico e preferências de consu
 | `DELETE` | `/albuns/{id}` | Excluir álbum (lógico) |
 | `PUT` | `/albuns/reativar/{id}` | Reativar álbum |
 
-### Músicas
+### 🎵 Músicas — `/musicas`
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
@@ -226,7 +257,7 @@ Entidade adicional criada para representar o histórico e preferências de consu
 | `DELETE` | `/musicas/{id}` | Excluir música (lógico) |
 | `PUT` | `/musicas/reativar/{id}` | Reativar música |
 
-### Playlists
+### 📂 Playlists — `/playlists`
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
@@ -237,7 +268,7 @@ Entidade adicional criada para representar o histórico e preferências de consu
 | `DELETE` | `/playlists/{id}` | Excluir playlist (lógico) |
 | `PUT` | `/playlists/reativar/{id}` | Reativar playlist |
 
-### Estatísticas
+### 📊 Estatísticas — `/usuarios/{usuarioId}/estatisticas`
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
@@ -250,67 +281,78 @@ Entidade adicional criada para representar o histórico e preferências de consu
 
 ## 🚀 Regras de Negócio Implementadas
 
-### 1. Reproduzir Música
+### 1️⃣ Reproduzir Música
 
 ```http
 POST /musicas/{id}/reproduzir
 X-USER-ID: {idUsuario}
 ```
 
-**Regras:**
-- Incrementa o campo `totalReproducoes`
-- Exige o usuário via header `X-USER-ID`
-- Bloqueia reprodução se o usuário estiver inativo
-- Atualiza automaticamente as estatísticas do usuário
+| Regra | Descrição |
+|-------|-----------|
+| ▶️ Reprodução | Incrementa `totalReproducoes` da música |
+| 🔑 Autenticação | Exige o usuário via header `X-USER-ID` |
+| 🚫 Bloqueio | Impede reprodução se o usuário estiver inativo |
+| 📊 Estatísticas | Atualiza automaticamente as estatísticas do usuário |
 
-### 2. Adicionar Música à Playlist
+---
+
+### 2️⃣ Adicionar Música à Playlist
 
 ```http
 POST /playlists/{playlistId}/musicas/{musicaId}
 X-USER-ID: {idUsuario}
 ```
 
-**Regras:**
-- Apenas o dono da playlist pode adicionar músicas
-- Não permite adicionar a mesma música duas vezes
-- A playlist precisa existir e estar ativa
-- A música precisa existir e estar ativa
+| Regra | Descrição |
+|-------|-----------|
+| 🔒 Propriedade | Apenas o dono da playlist pode adicionar músicas |
+| 🔁 Duplicatas | Não permite adicionar a mesma música duas vezes |
+| ✅ Playlist ativa | A playlist precisa existir e estar ativa |
+| ✅ Música ativa | A música precisa existir e estar ativa |
 
-### 3. Top 10 Músicas Mais Reproduzidas
+---
+
+### 3️⃣ Top 10 Músicas Mais Reproduzidas
 
 ```http
 GET /relatorios/top-musicas
 ```
 
-Retorna as 10 músicas com maior número de reproduções, em ordem decrescente, contendo:
+> Retorna as **10 músicas** com maior número de reproduções em **ordem decrescente**, contendo:
 
-- Título da música
-- Nome do artista
-- Total de reproduções
+- 🎵 Título da música
+- 🎤 Nome do artista
+- 🔢 Total de reproduções
 
 ---
 
 ## ❌ Exclusão Lógica
 
-Todas as entidades principais utilizam exclusão lógica. Ao invés de remover o objeto do sistema, o campo `ativo` é alterado para `false`.
+Todas as entidades utilizam **exclusão lógica**. O campo `ativo` é alterado para `false` em vez de remover o registro.
 
-Com isso:
+```
+DELETE /entidade/{id}  →  ativo: true  ──▶  ativo: false
+PUT /entidade/reativar/{id}  →  ativo: false  ──▶  ativo: true
+```
 
-- Registros excluídos não aparecem nas listagens
-- Registros inativos não podem ser utilizados em operações importantes
-- É possível reativar registros através de endpoints específicos (`/reativar/{id}`)
+| Comportamento | Descrição |
+|---------------|-----------|
+| 👁️ Listagens | Registros excluídos **não aparecem** |
+| 🚫 Operações | Registros inativos **não podem** ser usados |
+| ♻️ Reativação | Possível via `/reativar/{id}` |
 
 ---
 
 ## ✅ Validações Implementadas
 
-- Campos obrigatórios não podem ser nulos ou vazios
-- Não é permitido cadastrar usuários com e-mail duplicado
-- Não é permitido cadastrar músicas ou playlists com dados inválidos
-- Usuários inativos não podem reproduzir músicas
-- Usuários inativos não podem criar playlists
-- Artistas e álbuns precisam existir para serem associados a músicas
-- Não é permitido adicionar música repetida na mesma playlist
+- 🔴 Campos obrigatórios não podem ser nulos ou vazios
+- 📧 Não é permitido cadastrar usuários com **e-mail duplicado**
+- 🎵 Não é permitido cadastrar músicas ou playlists com dados inválidos
+- 🚫 **Usuários inativos** não podem reproduzir músicas
+- 🚫 **Usuários inativos** não podem criar playlists
+- 🔗 Artistas e álbuns precisam existir para serem associados a músicas
+- 🔁 Não é permitido **adicionar música repetida** na mesma playlist
 
 ---
 
@@ -318,35 +360,44 @@ Com isso:
 
 ### Pré-requisitos
 
-- Java 17+
-- Maven
-- IDE Java (ex: IntelliJ IDEA)
+- ☕ Java 17+
+- 📦 Maven
+- 💻 IDE Java (ex.: IntelliJ IDEA)
 
 ### Passos
 
-1. Clone o repositório:
+**1. Clone o repositório:**
 
 ```bash
-git clone <https://github.com/GabrielRosa1/mini-spotify-api.git>
+git clone https://github.com/GabrielRosa1/mini-spotify-api.git
 ```
 
-2. Entre na pasta do projeto:
+**2. Entre na pasta do projeto:**
 
 ```bash
 cd mini-spotify-api
 ```
 
-3. Execute a aplicação:
+**3. Execute a aplicação:**
 
 ```bash
 mvn spring-boot:run
 ```
 
-> Ou rode a classe principal `MiniSpotifyApiApplication.java` pela IDE.
+> Ou rode a classe principal `MiniSpotifyApiApplication.java` diretamente pela IDE.
+
+### 🌍 Base URL
+
+```
+http://localhost:8080
+```
+
+---
 
 ## 🧪 Exemplos de Requisições
 
-### Criar usuário
+<details>
+<summary><strong>👤 Criar Usuário</strong></summary>
 
 ```http
 POST /usuarios
@@ -361,7 +412,10 @@ Content-Type: application/json
 }
 ```
 
-### Criar artista
+</details>
+
+<details>
+<summary><strong>🎤 Criar Artista</strong></summary>
 
 ```http
 POST /artistas
@@ -376,7 +430,10 @@ Content-Type: application/json
 }
 ```
 
-### Criar álbum
+</details>
+
+<details>
+<summary><strong>💿 Criar Álbum</strong></summary>
 
 ```http
 POST /albuns
@@ -392,7 +449,10 @@ Content-Type: application/json
 }
 ```
 
-### Criar música
+</details>
+
+<details>
+<summary><strong>🎵 Criar Música</strong></summary>
 
 ```http
 POST /musicas
@@ -413,7 +473,10 @@ Content-Type: application/json
 }
 ```
 
-### Criar playlist
+</details>
+
+<details>
+<summary><strong>📂 Criar Playlist</strong></summary>
 
 ```http
 POST /playlists
@@ -431,46 +494,59 @@ Content-Type: application/json
 }
 ```
 
-### Reproduzir música
+</details>
+
+<details>
+<summary><strong>▶️ Reproduzir Música</strong></summary>
 
 ```http
 POST /musicas/{id}/reproduzir
 X-USER-ID: UUID_DO_USUARIO
 ```
 
-### Adicionar música à playlist
+</details>
+
+<details>
+<summary><strong>➕ Adicionar Música à Playlist</strong></summary>
 
 ```http
 POST /playlists/{playlistId}/musicas/{musicaId}
 X-USER-ID: UUID_DO_USUARIO
 ```
 
+</details>
+
 ---
 
 ## 📮 Coleção Postman
 
-O projeto acompanha uma coleção Postman para facilitar os testes dos endpoints.
+O projeto acompanha uma **coleção Postman** para facilitar os testes dos endpoints.
 
-**Sugestão de fluxo para testar:**
+📁 `postman/MiniSpotify.postman_collection.json`
 
-1. Criar usuário
-2. Criar artista
-3. Criar álbum
-4. Criar música
-5. Criar playlist
-6. Reproduzir música
-7. Adicionar música à playlist
-8. Consultar top músicas
-9. Consultar estatísticas do usuário
+### 🗺️ Ordem sugerida para testes
+
+```
+1. 👤 Criar usuário
+2. 🎤 Criar artista
+3. 💿 Criar álbum
+4. 🎵 Criar música
+5. 📂 Criar playlist
+6. ▶️ Reproduzir música
+7. ➕ Adicionar música à playlist
+8. 📊 Consultar estatísticas do usuário
+9. 🏆 Consultar top músicas
+```
 
 ---
 
-## 📌 Observações sobre a Implementação
+## 📝 Observações Técnicas
 
-- O projeto utiliza **armazenamento em memória** com `HashMap`, sem banco de dados
-- Os IDs são gerados com **UUID**
-- As respostas de erro são tratadas com `try/catch` nos controllers
-- O foco do projeto é demonstrar modelagem, regras de negócio e organização em camadas
+> ⚠️ **Armazenamento em memória:** o projeto utiliza `HashMap`, sem banco de dados. Os dados são perdidos ao reiniciar a aplicação.
+
+- 🔑 IDs gerados automaticamente com `UUID`
+- 🛡️ Respostas de erro tratadas com `try/catch` nos controllers
+- 🏗️ Foco em **modelagem**, **regras de negócio** e **organização em camadas**
 
 ---
 
@@ -480,11 +556,20 @@ O projeto acompanha uma coleção Postman para facilitar os testes dos endpoints
 - [x] CRUD completo das entidades principais
 - [x] Regras de negócio solicitadas
 - [x] Estrutura em camadas (Controller e Service)
-- [x] Exclusão lógica
+- [x] Exclusão lógica com reativação
 - [x] Organização e clareza do código
+- [x] Validações de entrada
 
 ---
 
 ## 👨‍💻 Autor
 
-Projeto desenvolvido para a disciplina de **Arquitetura de Objetos e Times Ágeis**.
+<div align="center">
+
+**Gabriel Rosa**
+
+Projeto desenvolvido para a disciplina de **Arquitetura de Objetos e Times Ágeis**
+
+[![GitHub](https://img.shields.io/badge/GitHub-GabrielRosa1-181717?style=for-the-badge&logo=github)](https://github.com/GabrielRosa1/mini-spotify-api)
+
+</div>
