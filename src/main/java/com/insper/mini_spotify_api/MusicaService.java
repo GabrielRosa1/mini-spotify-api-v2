@@ -169,7 +169,9 @@ public class MusicaService {
         return musicaAtualizada;
     }
 
-    public boolean verifyUUID(UUID id) {
-        return musicaRepository.existsById(id);
+    // GET /musicas/top-musicas
+    public Collection<Musica> getTop10Musicas() {
+        return musicaRepository.findTop10ByAtivoTrueOrderByTotalReproducoesDesc();
     }
+
 }

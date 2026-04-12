@@ -83,4 +83,11 @@ public class MusicaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @GetMapping("/top-musicas")
+    public ResponseEntity<Collection<Musica>> getTop10Musicas() {
+        Collection<Musica> topMusicas = musicaService.getTop10Musicas();
+        return ResponseEntity.ok(topMusicas);
+    }
+
 }
