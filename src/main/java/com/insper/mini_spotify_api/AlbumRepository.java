@@ -7,6 +7,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AlbumRepository extends JpaRepository<Album, UUID> {
+
     List<Album> findAllByAtivoTrue();
+
     Optional<Album> findByIdAndAtivoTrue(UUID id);
+
+    boolean existsByTituloIgnoreCase(String titulo);
+
+    boolean existsByTituloIgnoreCaseAndIdNot(String titulo, UUID id);
 }
