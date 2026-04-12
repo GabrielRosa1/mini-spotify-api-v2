@@ -8,85 +8,80 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.UUID;
 
-
 @RestController
+@RequestMapping("/playlists")
 public class PlaylistController {
 
     @Autowired
     private PlaylistService playlistService;
 
-    @PostMapping("/playlists")
+    @PostMapping
     public ResponseEntity<Object> criarPlaylist(@RequestBody Playlist playlist) {
         try {
             Playlist p = playlistService.criarPlaylist(playlist);
             return ResponseEntity.status(HttpStatus.CREATED).body(p);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @GetMapping("/playlists")
+    @GetMapping
     public ResponseEntity<Collection<Playlist>> getPlaylists() {
-
         Collection<Playlist> totalPlaylists = playlistService.getPlaylists();
         return ResponseEntity.ok(totalPlaylists);
-
     }
 
-    @GetMapping("/playlists/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Object> getPlaylist(@PathVariable UUID id) {
         try {
             Playlist playlist = playlistService.getPlaylist(id);
             return ResponseEntity.ok(playlist);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @PutMapping("/playlists/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> editPlaylist(@PathVariable UUID id, @RequestBody Playlist dadosAtualizados) {
         try {
             Playlist playlist = playlistService.editPlaylist(id, dadosAtualizados);
             return ResponseEntity.ok(playlist);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @DeleteMapping("/playlists/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletePlaylist(@PathVariable UUID id) {
         try {
             playlistService.deletePlaylist(id);
             return ResponseEntity.noContent().build();
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @PutMapping("/playlists/reativar/{id}")
+    @PutMapping("/reativar/{id}")
     public ResponseEntity<Object> reactivatePlaylist(@PathVariable UUID id) {
         try {
             Playlist playlist = playlistService.reactivatePlaylist(id);
             return ResponseEntity.ok(playlist);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @PostMapping("/playlists/{playlistId}/musicas/{musicaId}")
-    public ResponseEntity<Object> adicionarMusica(@PathVariable UUID playlistId, @PathVariable UUID musicaId, @RequestHeader("X-USER-ID") UUID usuarioId) {
+    @PostMapping("/{playlistId}/musicas/{musicaId}")
+    public ResponseEntity<Object> adicionarMusica(
+            @PathVariable UUID playlistId,
+            @PathVariable UUID musicaId,
+            @RequestHeader("X-USER-ID") UUID usuarioId
+    ) {
         try {
             Playlist playlist = playlistService.adicionarMusica(playlistId, musicaId, usuarioId);
             return ResponseEntity.ok(playlist);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
 }

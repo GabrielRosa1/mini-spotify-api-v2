@@ -7,7 +7,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PlaylistRepository extends JpaRepository<Playlist, UUID> {
+
     List<Playlist> findAllByAtivoTrue();
+
     Optional<Playlist> findByIdAndAtivoTrue(UUID id);
-    List<Playlist> findAllByUsuarioIdAndAtivoTrue(UUID usuarioId);
+
+    boolean existsByNomeIgnoreCase(String nome);
+
+    boolean existsByNomeIgnoreCaseAndIdNot(String nome, UUID id);
 }
