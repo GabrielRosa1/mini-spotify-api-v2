@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface EstatisticasRepository extends JpaRepository<Estatisticas, UUID> {
     Optional<Estatisticas> findByUsuarioId(UUID usuarioId);
+    boolean existsByUsuarioId(UUID usuarioId);
 }
