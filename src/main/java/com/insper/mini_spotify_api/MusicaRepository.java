@@ -10,4 +10,7 @@ public interface MusicaRepository extends JpaRepository<Musica, UUID> {
     List<Musica> findAllByAtivoTrue();
     Optional<Musica> findByIdAndAtivoTrue(UUID id);
     List<Musica> findTop10ByAtivoTrueOrderByTotalReproducoesDesc();
+
+    boolean existsByTituloIgnoreCase(String titulo);
+    boolean existsByTituloIgnoreCaseAndIdNot(String titulo, UUID id);
 }

@@ -2,12 +2,8 @@ package com.insper.mini_spotify_api;
 
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.UUID;
-
 
 @Service
 public class MusicaService {
@@ -16,20 +12,23 @@ public class MusicaService {
     private final EstatisticasService estatisticasService;
     private final ArtistaService artistaService;
     private final AlbumService albumService;
-    private final HashMap<UUID, Musica> musicas = new HashMap<>();
+    private final MusicaRepository musicaRepository;
 
-    public MusicaService(UsuarioService usuarioService, EstatisticasService estatisticasService, ArtistaService artistaService, AlbumService albumService) {
+    public MusicaService(
+            UsuarioService usuarioService,
+            EstatisticasService estatisticasService,
+            ArtistaService artistaService,
+            AlbumService albumService,
+            MusicaRepository musicaRepository
+    ) {
         this.usuarioService = usuarioService;
         this.estatisticasService = estatisticasService;
         this.artistaService = artistaService;
         this.albumService = albumService;
+        this.musicaRepository = musicaRepository;
     }
 
-    public HashMap<UUID, Musica> getHashMusicas() {
-        return musicas;
-    }
-
-    //POST /musicas
+    // POST /musicas
     public Musica criarMusica(Musica musica) {
 
         if (musica == null) {
@@ -37,7 +36,7 @@ public class MusicaService {
         }
 
         if (musica.getTitulo() == null || musica.getTitulo().isBlank()) {
-            throw new RuntimeException("Titulo da musica é obrigatório");
+            throw new RuntimeException("Título da música é obrigatório");
         }
 
         if (musica.getArtista() == null || musica.getArtista().getId() == null) {
@@ -45,11 +44,11 @@ public class MusicaService {
         }
 
         if (musica.getAlbum() == null || musica.getAlbum().getId() == null) {
-            throw new RuntimeException("Album é obrigatório");
+            throw new RuntimeException("Álbum é obrigatório");
         }
 
         if (!albumService.verifyUUID(musica.getAlbum().getId())) {
-            throw new RuntimeException("Id de um album válido é obrigatório");
+            throw new RuntimeException("Id de um álbum válido é obrigatório");
         }
 
         if (!artistaService.verifyUUID(musica.getArtista().getId())) {
@@ -57,66 +56,45 @@ public class MusicaService {
         }
 
         if (musica.getNumeroFaixa() < 0 || musica.getDuracaoSegundos() < 0) {
-            throw new RuntimeException("Campos numeroFaixa e duracaoSegundos devem ter valores reais");
+            throw new RuntimeException("Campos numeroFaixa e duracaoSegundos devem ser maiores ou iguais a zero");
         }
 
-        for (Musica m : musicas.values()) {
-            if (m.getTitulo().equalsIgnoreCase(musica.getTitulo())) {
-                throw new RuntimeException("Já existe uma musica com esse título");
-            }
+        if (musicaRepository.existsByTituloIgnoreCase(musica.getTitulo())) {
+            throw new RuntimeException("Já existe uma música com esse título");
         }
 
-        musica.setId(UUID.randomUUID());
+        musica.setId(null);
+        musica.setAlbum(albumService.getAlbum(musica.getAlbum().getId()));
+        musica.setArtista(artistaService.getArtista(musica.getArtista().getId()));
         musica.setAtivo(true);
         musica.setTotalReproducoes(0);
 
-        musicas.put(musica.getId(), musica);
-        return musica;
-
+        return musicaRepository.save(musica);
     }
 
-    //GET /musicas
+    // GET /musicas
     public Collection<Musica> getMusicas() {
-
-        Collection<Musica> totalMusicas = new ArrayList<>();
-
-        for (Musica m : musicas.values()) {
-            if (m.getTitulo() != null && m.isAtivo()) {
-                totalMusicas.add(m);
-            }
-        }
-
-        return totalMusicas;
+        return musicaRepository.findAllByAtivoTrue();
     }
 
-    //GET /musicas/{id}
+    // GET /musicas/{id}
     public Musica getMusica(UUID id) {
-
-        Musica musica = musicas.get(id);
-
-        if (musica == null || !musica.isAtivo()) {
-            throw new RuntimeException("Essa musica não existe");
-        }
-
-        return musica;
-
+        return musicaRepository.findByIdAndAtivoTrue(id)
+                .orElseThrow(() -> new RuntimeException("Essa música não existe"));
     }
 
-    //PUT /musicas/{id}
+    // PUT /musicas/{id}
     public Musica editMusica(UUID id, Musica dadosAtualizados) {
 
-        Musica musica = musicas.get(id);
-
-        if (musica == null || !musica.isAtivo()) {
-            throw new RuntimeException("Essa musica não existe ou não pode ser modificada");
-        }
+        Musica musica = musicaRepository.findByIdAndAtivoTrue(id)
+                .orElseThrow(() -> new RuntimeException("Essa música não existe ou não pode ser modificada"));
 
         if (dadosAtualizados == null) {
             throw new RuntimeException("Body inválido");
         }
 
         if (dadosAtualizados.getTitulo() == null || dadosAtualizados.getTitulo().isBlank()) {
-            throw new RuntimeException("Titulo da musica é obrigatório");
+            throw new RuntimeException("Título da música é obrigatório");
         }
 
         if (dadosAtualizados.getArtista() == null || dadosAtualizados.getArtista().getId() == null) {
@@ -124,15 +102,11 @@ public class MusicaService {
         }
 
         if (dadosAtualizados.getAlbum() == null || dadosAtualizados.getAlbum().getId() == null) {
-            throw new RuntimeException("Album é obrigatório");
-        }
-
-        if (dadosAtualizados.getNumeroFaixa() < 0 || dadosAtualizados.getDuracaoSegundos() < 0) {
-            throw new RuntimeException("Campos numeroFaixa e duracaoSegundos são obrigatórios");
+            throw new RuntimeException("Álbum é obrigatório");
         }
 
         if (!albumService.verifyUUID(dadosAtualizados.getAlbum().getId())) {
-            throw new RuntimeException("Id de um album válido é obrigatório");
+            throw new RuntimeException("Id de um álbum válido é obrigatório");
         }
 
         if (!artistaService.verifyUUID(dadosAtualizados.getArtista().getId())) {
@@ -143,10 +117,8 @@ public class MusicaService {
             throw new RuntimeException("Campos numeroFaixa e duracaoSegundos devem ser maiores ou iguais a zero");
         }
 
-        for (Musica m : musicas.values()) {
-            if (!m.getId().equals(id) && m.getTitulo().equalsIgnoreCase(dadosAtualizados.getTitulo())) {
-                throw new RuntimeException("Já existe uma musica com esse título");
-            }
+        if (musicaRepository.existsByTituloIgnoreCaseAndIdNot(dadosAtualizados.getTitulo(), id)) {
+            throw new RuntimeException("Já existe uma música com esse título");
         }
 
         musica.setTitulo(dadosAtualizados.getTitulo());
@@ -155,36 +127,32 @@ public class MusicaService {
         musica.setNumeroFaixa(dadosAtualizados.getNumeroFaixa());
         musica.setDuracaoSegundos(dadosAtualizados.getDuracaoSegundos());
 
-        return musica;
+        return musicaRepository.save(musica);
     }
 
-    //DELETE /musicas/{id}
+    // DELETE /musicas/{id}
     public void deleteMusica(UUID id) {
-        Musica musica = musicas.get(id);
-
-        if (musica == null || !musica.isAtivo()) {
-            throw new RuntimeException("Essa musica não existe ou não pode ser modificada");
-        }
+        Musica musica = musicaRepository.findByIdAndAtivoTrue(id)
+                .orElseThrow(() -> new RuntimeException("Essa música não existe ou não pode ser modificada"));
 
         musica.setAtivo(false);
+        musicaRepository.save(musica);
     }
 
-    //PUT /musicas/{id}
+    // PUT /musicas/reativar/{id}
     public Musica reactivateMusica(UUID id) {
-        Musica musica = musicas.get(id);
-
-        if (musica == null) {
-            throw new RuntimeException("Essa musica não existe ou não pode ser modificada");
-        }
+        Musica musica = musicaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Essa música não existe ou não pode ser modificada"));
 
         if (musica.isAtivo()) {
-            throw new RuntimeException("Essa musica já está ativa");
+            throw new RuntimeException("Essa música já está ativa");
         }
 
         musica.setAtivo(true);
-        return musica;
+        return musicaRepository.save(musica);
     }
 
+    // POST /musicas/{id}/reproduzir
     public Musica reproduzirMusica(UUID musicaId, UUID usuarioId) {
         Musica musica = getMusica(musicaId);
         Usuario usuario = usuarioService.getUsuario(usuarioId);
@@ -194,8 +162,14 @@ public class MusicaService {
         }
 
         musica.setTotalReproducoes(musica.getTotalReproducoes() + 1);
-        estatisticasService.registrarReproducao(usuarioId, musica);
+        Musica musicaAtualizada = musicaRepository.save(musica);
 
-        return musica;
+        estatisticasService.registrarReproducao(usuarioId, musicaAtualizada);
+
+        return musicaAtualizada;
+    }
+
+    public boolean verifyUUID(UUID id) {
+        return musicaRepository.existsById(id);
     }
 }
