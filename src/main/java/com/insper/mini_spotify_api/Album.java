@@ -1,20 +1,41 @@
 package com.insper.mini_spotify_api;
 
-import org.springframework.cglib.core.Local;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
+@Table(name = "albuns")
 public class Album {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String titulo;
-    private LocalDate dataLancamento;
-    private Artista artista;
-    private boolean ativo;
-    private List<Musica> musicas;
 
+    @Column(nullable = false)
+    private String titulo;
+
+    private LocalDate dataLancamento;
+
+    @JsonBackReference("artista-albuns")
+    @ManyToOne
+    @JoinColumn(name = "artista_id", nullable = false)
+    private Artista artista;
+
+    @JsonManagedReference("album-musicas")
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL)
+    private List<Musica> musicas = new ArrayList<>();
+
+    @Column(nullable = false)
+    private boolean ativo = true;
+
+    public Album() {
+    }
 
     public UUID getId() {
         return id;

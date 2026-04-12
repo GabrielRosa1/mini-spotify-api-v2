@@ -1,17 +1,46 @@
 package com.insper.mini_spotify_api;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+
 import java.util.UUID;
 
+@Entity
+@Table(name = "musicas")
 public class Musica {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Column(nullable = false)
     private String titulo;
+
+    @Column(nullable = false)
     private int duracaoSegundos;
+
+    @Column(nullable = false)
     private int numeroFaixa;
+
+    @JsonBackReference("album-musicas")
+    @ManyToOne
+    @JoinColumn(name = "album_id", nullable = false)
     private Album album;
+
+    @JsonIgnoreProperties({"albuns"})
+    @ManyToOne
+    @JoinColumn(name = "artista_id", nullable = false)
     private Artista artista;
-    private long totalReproducoes;
-    private boolean ativo;
+
+    @Column(nullable = false)
+    private long totalReproducoes = 0;
+
+    @Column(nullable = false)
+    private boolean ativo = true;
+
+    public Musica() {
+    }
 
     public UUID getId() {
         return id;
