@@ -1,21 +1,55 @@
 package com.insper.mini_spotify_api;
 
-import org.springframework.cglib.core.Local;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
+@Table(name = "playlists")
 public class Playlist {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String nome;
-    private Boolean publica;
-    private LocalDateTime dataCriacao;
-    private Usuario usuario;
-    private List<Musica> musicas;
-    private boolean ativo;
 
+    @Column(nullable = false)
+    private String nome;
+
+    @Column(nullable = false)
+    private Boolean publica = false;
+
+    @Column(nullable = false)
+    private LocalDateTime dataCriacao;
+
+    @JsonBackReference("usuario-playlists")
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    @ManyToMany
+    @JoinTable(
+            name = "playlist_musicas",
+            joinColumns = @JoinColumn(name = "playlist_id"),
+            inverseJoinColumns = @JoinColumn(name = "musica_id")
+    )
+    private List<Musica> musicas = new ArrayList<>();
+
+    @Column(nullable = false)
+    private boolean ativo = true;
+
+    public Playlist() {
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.dataCriacao == null) {
+            this.dataCriacao = LocalDateTime.now();
+        }
+    }
 
     public UUID getId() {
         return id;
@@ -72,5 +106,4 @@ public class Playlist {
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
-
 }

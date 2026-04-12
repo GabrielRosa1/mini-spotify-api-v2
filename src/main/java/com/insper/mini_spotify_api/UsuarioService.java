@@ -5,75 +5,89 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.UUID;
 
 @Service
 public class UsuarioService {
 
-    private HashMap<UUID, Usuario> usuarios = new HashMap<>();
+    private final UsuarioRepository usuarioRepository;
 
-    //POST /usuarios
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    private void prepararRelacionamentos(Usuario usuario) {
+        if (usuario.getEstatisticas() != null) {
+            usuario.getEstatisticas().setUsuario(usuario);
+
+            if (usuario.getEstatisticas().getMusicasReproduzidas() == null) {
+                usuario.getEstatisticas().setMusicasReproduzidas(0);
+            }
+
+            if (usuario.getEstatisticas().getTempoReproducao() == null) {
+                usuario.getEstatisticas().setTempoReproducao(0);
+            }
+        }
+
+        if (usuario.getPlaylists() == null) {
+            usuario.setPlaylists(new ArrayList<>());
+        }
+
+        for (Playlist playlist : usuario.getPlaylists()) {
+            playlist.setUsuario(usuario);
+
+            if (playlist.getDataCriacao() == null) {
+                playlist.setDataCriacao(LocalDateTime.now());
+            }
+
+            if (playlist.getPublica() == null) {
+                playlist.setPublica(false);
+            }
+
+            if (playlist.getMusicas() == null) {
+                playlist.setMusicas(new ArrayList<>());
+            }
+
+            playlist.setAtivo(true);
+        }
+    }
+
     public Usuario cadastrarUsuario(Usuario usuario) {
-
         if (usuario == null) {
             throw new RuntimeException("Body inválido");
         }
 
-        for (Usuario u : usuarios.values()) {
-            if (u.getEmail().equals(usuario.getEmail())) {
-                throw new RuntimeException("Um usuário com esse e-mail já existe");
-            }
-        }
-
-        if (usuario.getNome() == null || usuario.getNome().isBlank() || usuario.getEmail() == null
-                || usuario.getEmail().isBlank() || usuario.getTipoPlano() == null) {
+        if (usuario.getNome() == null || usuario.getNome().isBlank()
+                || usuario.getEmail() == null || usuario.getEmail().isBlank()
+                || usuario.getTipoPlano() == null) {
             throw new RuntimeException("Dados inválidos");
         }
 
-        usuario.setId(UUID.randomUUID());
+        if (usuarioRepository.existsByEmailIgnoreCase(usuario.getEmail())) {
+            throw new RuntimeException("Um usuário com esse e-mail já existe");
+        }
+
+        usuario.setId(null);
         usuario.setAtivo(true);
         usuario.setDataCriacao(LocalDateTime.now());
 
-        usuarios.put(usuario.getId(), usuario);
-        return usuario;
+        prepararRelacionamentos(usuario);
+
+        return usuarioRepository.save(usuario);
     }
 
-    //GET /usuarios
     public Collection<Usuario> getUsuarios() {
-
-        Collection<Usuario> totalUsuarios = new ArrayList<>();
-
-        for (Usuario u : usuarios.values()) {
-            if (u.getEmail() != null && u.isAtivo()) {
-                totalUsuarios.add(u);
-            }
-        }
-
-        return totalUsuarios;
+        return usuarioRepository.findAllByAtivoTrue();
     }
 
-    //GET /usuarios/{id}
     public Usuario getUsuario(UUID id) {
-
-        Usuario usuario = usuarios.get(id);
-
-        if (usuario == null || !usuario.isAtivo()) {
-            throw new RuntimeException("Esse usuário não existe ou está inativo");
-        }
-
-        return usuario;
-
+        return usuarioRepository.findByIdAndAtivoTrue(id)
+                .orElseThrow(() -> new RuntimeException("Esse usuário não existe ou está inativo"));
     }
 
-    //PUT /usuarios/{id}
     public Usuario editUsuario(UUID id, Usuario dadosAtualizados) {
-
-        Usuario usuario = usuarios.get(id);
-
-        if (usuario == null || !usuario.isAtivo()) {
-            throw new RuntimeException("Esse usuário não existe ou não pode ser modificado");
-        }
+        Usuario usuario = usuarioRepository.findByIdAndAtivoTrue(id)
+                .orElseThrow(() -> new RuntimeException("Esse usuário não existe ou não pode ser modificado"));
 
         if (dadosAtualizados == null) {
             throw new RuntimeException("Body inválido");
@@ -85,53 +99,48 @@ public class UsuarioService {
             throw new RuntimeException("Dados inválidos");
         }
 
-        for (Usuario u : usuarios.values()) {
-            if (!u.getId().equals(id) && u.getEmail().equalsIgnoreCase(dadosAtualizados.getEmail())) {
-                throw new RuntimeException("Um usuário com esse e-mail já existe");
-            }
+        if (usuarioRepository.existsByEmailIgnoreCaseAndIdNot(dadosAtualizados.getEmail(), id)) {
+            throw new RuntimeException("Um usuário com esse e-mail já existe");
         }
 
         usuario.setNome(dadosAtualizados.getNome());
         usuario.setEmail(dadosAtualizados.getEmail());
         usuario.setTipoPlano(dadosAtualizados.getTipoPlano());
 
-        return usuario;
+        if (dadosAtualizados.getEstatisticas() != null) {
+            usuario.setEstatisticas(dadosAtualizados.getEstatisticas());
+        }
+
+        if (dadosAtualizados.getPlaylists() != null) {
+            usuario.setPlaylists(dadosAtualizados.getPlaylists());
+        }
+
+        prepararRelacionamentos(usuario);
+
+        return usuarioRepository.save(usuario);
     }
 
-    //DELETE /usuarios/{id}
     public void deleteUsuario(UUID id) {
-        Usuario usuario = usuarios.get(id);
-
-        if (usuario == null || !usuario.isAtivo()) {
-            throw new RuntimeException("Esse usuário não existe ou não pode ser modificado");
-        }
+        Usuario usuario = usuarioRepository.findByIdAndAtivoTrue(id)
+                .orElseThrow(() -> new RuntimeException("Esse usuário não existe ou não pode ser modificado"));
 
         usuario.setAtivo(false);
+        usuarioRepository.save(usuario);
     }
 
-    //PUT /usuarios/{id}
     public Usuario reactivateUsuario(UUID id) {
-        Usuario usuario = usuarios.get(id);
-
-        if (usuario == null) {
-            throw new RuntimeException("Esse usuário não existe ou não pode ser modificado");
-        }
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Esse usuário não existe ou não pode ser modificado"));
 
         if (usuario.isAtivo()) {
             throw new RuntimeException("Esse usuário já está ativo");
         }
 
         usuario.setAtivo(true);
-        return usuario;
+        return usuarioRepository.save(usuario);
     }
 
     public boolean verifyUUID(UUID id) {
-        for (Usuario u : usuarios.values()) {
-            if (u.getId().equals(id)) {
-                return true;
-            }
-        }
-        return false;
+        return usuarioRepository.existsById(id);
     }
-
 }
