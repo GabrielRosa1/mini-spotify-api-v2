@@ -9,4 +9,7 @@ import java.util.UUID;
 public interface ArtistaRepository extends JpaRepository<Artista, UUID> {
     List<Artista> findAllByAtivoTrue();
     Optional<Artista> findByIdAndAtivoTrue(UUID id);
+
+    boolean existsByNomeIgnoreCase(String nome);
+    boolean existsByNomeIgnoreCaseAndIdNot(String nome, UUID id);
 }
