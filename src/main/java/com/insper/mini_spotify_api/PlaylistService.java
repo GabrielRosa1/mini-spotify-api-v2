@@ -180,10 +180,6 @@ public class PlaylistService {
         return playlistRepository.save(playlist);
     }
 
-    public boolean verifyUUID(UUID id) {
-        return playlistRepository.existsById(id);
-    }
-
     private List<Musica> resolverMusicas(List<Musica> musicasRecebidas) {
         List<Musica> musicasReais = new ArrayList<>();
 
